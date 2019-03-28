@@ -1,7 +1,11 @@
 package com.hackathon.wowlunteer.user.persistence.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import com.hackathon.wowlunteer.event.persistence.model.Event;
+
+import com.hackathon.wowlunteer.user.util.UserType;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,7 +19,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "users")
-public class ApplicationUser {
+public abstract class ApplicationUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,7 +31,13 @@ public class ApplicationUser {
     @NotNull
     private String email;
 
+    @Transient
+    @Enumerated(EnumType.STRING)
+    private UserType type;
+
     private boolean enabled;
+
+    private String mobileNumber;
 
     @ManyToMany(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
     @JoinTable(

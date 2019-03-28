@@ -8,10 +8,12 @@ import com.hackathon.wowlunteer.user.exceptions.UserRoleNotFoundException;
 import com.hackathon.wowlunteer.user.persistence.model.ApplicationUser;
 import com.hackathon.wowlunteer.user.persistence.model.ApplicationUserRole;
 import com.hackathon.wowlunteer.user.persistence.model.ConfirmationToken;
+import com.hackathon.wowlunteer.user.persistence.model.Volunteer;
 import com.hackathon.wowlunteer.user.persistence.repository.ApplicationUserRepository;
 import com.hackathon.wowlunteer.user.persistence.repository.ConfirmationTokenRepository;
 import com.hackathon.wowlunteer.user.util.ApplicationUserDTO;
 import com.hackathon.wowlunteer.user.util.Role;
+import com.hackathon.wowlunteer.user.util.UserType;
 import com.hackathon.wowlunteer.user.web.RegisterResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
@@ -26,6 +28,8 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.hackathon.wowlunteer.user.util.UserFactory.createUser;
 
 @Service
 public class ApplicationUserService {
@@ -62,6 +66,7 @@ public class ApplicationUserService {
         return applicationUserRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
     }
 
+
     public ApplicationUser findByPrincipal(Principal principal) throws UsernameNotFoundException {
         JwtAuthenticationToken authenticationToken = (JwtAuthenticationToken) principal;
         UserContext userContext = (UserContext) authenticationToken.getPrincipal();
@@ -70,23 +75,46 @@ public class ApplicationUserService {
     }
 
 
+    public ApplicationUser createNewUser(ApplicationUserDTO applicationUserDTO) throws IllegalArgumentException {
+        ApplicationUser applicationUser;
+        for (UserType t : UserType.values()) {
+            if (UserType.valueOf(applicationUserDTO.getType().toUpperCase()).equals(t)) {
+                applicationUser = createUser(t);
+                return applicationUser;
+            }
+        }
+        throw new IllegalArgumentException("No such user type!");
+    }
+
+    public List<ApplicationUserRole> createRoleForUser(ApplicationUserDTO applicationUserDTO) throws UserRoleNotFoundException {
+        ApplicationUserRole volunteerRole = new ApplicationUserRole(1L, Role.VOLUNTEER);
+        roleService.saveRole(volunteerRole);
+        ApplicationUserRole companyRole = new ApplicationUserRole(2L, Role.COMPANY);
+        roleService.saveRole(companyRole);
+        List<ApplicationUserRole> userRoles = new ArrayList<>();
+        for (Role r : Role.values()) {
+            if (r.getName().equals(applicationUserDTO.getType().toUpperCase())) {
+                userRoles.add(roleService.findByRole(r));
+            }
+        }
+        return userRoles;
+    }
+
+
     public RegisterResponse registerApplicationUser(ApplicationUserDTO applicationUserDTO)
             throws EmailIsTakenException, UserRoleNotFoundException, EmailNotValidException {
 
-        if (applicationUserDTO.getEmail().matches("^[_A-Za-z0-9]+(\\.[_A-Za-z0-9-]+)*@"
+        if (!applicationUserDTO.getEmail().matches("^[_A-Za-z0-9]+(\\.[_A-Za-z0-9-]+)*@"
                 + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$")) {
-            if (!existsByEmail(applicationUserDTO.getEmail())) {
+            throw new EmailNotValidException("Not a valid email");
+        }
+        if (!existsByEmail(applicationUserDTO.getEmail())) {
 
-                final ApplicationUser applicationUser = new ApplicationUser();
-                //TODO this is used only for development purpose
-                ApplicationUserRole applicationUserRole = new ApplicationUserRole(1L, Role.USER);
-                roleService.saveRole(applicationUserRole);
-                List<ApplicationUserRole> userRoles = new ArrayList<>();
-                userRoles.add(roleService.findById(1L));
+                ApplicationUser applicationUser = createNewUser(applicationUserDTO);
 
-                applicationUser.setPassword(encoder.encode(applicationUserDTO.getPassword()));
                 applicationUser.setEmail(applicationUserDTO.getEmail());
-                applicationUser.setRoles(userRoles);
+                applicationUser.setPassword(encoder.encode(applicationUserDTO.getPassword()));
+                applicationUser.setRoles(createRoleForUser(applicationUserDTO));
 
                 ConfirmationToken confirmationToken = new ConfirmationToken(applicationUser);
                 applicationUser.setConfirmationToken(confirmationToken);
@@ -103,10 +131,8 @@ public class ApplicationUserService {
                 emailSenderService.sendEmail(mailMessage);
                 return new RegisterResponse(applicationUser.getId(),
                         applicationUser.getEmail(), "Please verify your email address");
-            }
-            throw new EmailIsTakenException();
         }
-        throw new EmailNotValidException("Not a valid email");
+        throw new EmailIsTakenException();
     }
 
     public String verifyEmail(String confirmationToken) {

@@ -32,7 +32,6 @@ public class AjaxAuthenticationProvider implements AuthenticationProvider {
 
         String email = (String) authentication.getPrincipal();
         String password = (String) authentication.getCredentials();
-        System.out.println(email);
 
         ApplicationUser applicationUser = applicationUserService.findByEmail(email);
 
