@@ -23,8 +23,7 @@ public class VolunteerService {
     public List<VolunteerDTO> mapVolunteers(List<Volunteer> volunteers) {
         return volunteers.stream()
                 .map(v -> new VolunteerDTO(v.getEmail(), v.getFirstName(), v.getLastName(),
-                        v.getMobileNumber(), v.getProfession(), v.getAge(), v.getIsLooking(),
-                        v.getEventType())).collect(Collectors.toList());
+                        v.getMobileNumber(), v.getProfession(), v.getAge(), v.getIsLooking())).collect(Collectors.toList());
     }
 
     public List<VolunteerDTO> searchVolunteers(SearchDTO searchDTO) {
@@ -33,8 +32,7 @@ public class VolunteerService {
             volunteers = volunteerRepository.findAllByIsLooking(true);
         }
                 volunteers = volunteers.stream()
-                .filter(p -> p.getProfession().contains(searchDTO.getProfession()))
-                .filter(t -> t.getEventType().contains(searchDTO.getInterest())).collect(Collectors.toList());
+                .filter(p -> p.getProfession().contains(searchDTO.getProfession())).collect(Collectors.toList());
         return mapVolunteers(volunteers);
     }
 }

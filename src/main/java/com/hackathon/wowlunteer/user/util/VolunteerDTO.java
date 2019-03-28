@@ -19,7 +19,7 @@ public class VolunteerDTO {
     public VolunteerDTO() {
     }
 
-    public VolunteerDTO(String email, String firstname, String lastname, String mobileNumber, String profession, Integer age, Boolean isLooking, String eventType) {
+    public VolunteerDTO(String email, String firstname, String lastname, String mobileNumber, String profession, Integer age, Boolean isLooking) {
         this.email = email;
         this.firstname = firstname;
         this.lastname = lastname;
@@ -27,6 +27,5 @@ public class VolunteerDTO {
         this.profession = profession;
         this.age = age;
         this.isLooking = isLooking;
-        this.eventType = eventType;
     }
 }

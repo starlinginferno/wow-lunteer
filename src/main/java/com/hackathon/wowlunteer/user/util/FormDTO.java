@@ -18,5 +18,4 @@ public class FormDTO {
     private String profession;
     private Integer age;
     private Boolean isLooking;
-    private String eventType;
 }

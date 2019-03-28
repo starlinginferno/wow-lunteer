@@ -1,6 +1,5 @@
 package com.hackathon.wowlunteer.user.web;
 
-import com.hackathon.wowlunteer.user.persistence.model.Volunteer;
 import com.hackathon.wowlunteer.user.service.VolunteerService;
 import com.hackathon.wowlunteer.user.util.SearchDTO;
 import com.hackathon.wowlunteer.user.util.VolunteerDTO;
