@@ -12,8 +12,9 @@ public class Volunteer extends ApplicationUser {
 
     private String firstName;
     private String lastName;
+    private String mobileNumber;
     private String profession;
-    private String age;
+    private Integer age;
     private Boolean isLooking;
     private String eventType;
 }

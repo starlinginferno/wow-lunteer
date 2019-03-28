@@ -39,7 +39,7 @@ public class ApplicationUserController {
 
     @PostMapping("/api/user/form")
     @ResponseStatus(HttpStatus.OK)
-    public void completeForm(FormDTO formDTO, Principal principal) {
+    public void completeForm(@RequestBody @Valid FormDTO formDTO, Principal principal) {
         ApplicationUser applicationUser = applicationUserService.getUserFromPrincipal(principal);
         applicationUserService.fillInForm(applicationUser, formDTO);
     }

@@ -33,8 +33,6 @@ public abstract class ApplicationUser {
 
     private boolean enabled;
 
-    private String mobileNumber;
-
     @ManyToMany(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
     @JoinTable(
             name = "app_user_roles",

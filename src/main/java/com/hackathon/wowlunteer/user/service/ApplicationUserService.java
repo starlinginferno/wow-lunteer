@@ -13,6 +13,7 @@ import com.hackathon.wowlunteer.user.util.FormDTO;
 import com.hackathon.wowlunteer.user.util.Role;
 import com.hackathon.wowlunteer.user.util.UserType;
 import com.hackathon.wowlunteer.user.web.RegisterResponse;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
@@ -161,19 +162,14 @@ public class ApplicationUserService {
     }
 
     public void fillInForm(ApplicationUser applicationUser, FormDTO formDTO) {
+        ModelMapper mapper = new ModelMapper();
         if (getUsersRole(applicationUser).toUpperCase().equals("COMPANY")) {
             Company company = (Company) findById(applicationUser.getId());
-            company.setName(formDTO.getName());
-            company.setDescription(formDTO.getDescription());
+            mapper.map(formDTO, company);
             applicationUserRepository.save(company);
         } else if (getUsersRole(applicationUser).toUpperCase().equals("VOLUNTEER")) {
             Volunteer volunteer = (Volunteer) findById(applicationUser.getId());
-            volunteer.setFirstName(formDTO.getFirstName());
-            volunteer.setLastName(formDTO.getLastName());
-            volunteer.setAge(formDTO.getAge());
-            volunteer.setProfession(formDTO.getProfession());
-            volunteer.setIsLooking(formDTO.getIsLooking());
-            volunteer.setEventType(formDTO.getEventType());
+            mapper.map(formDTO, volunteer);
             applicationUserRepository.save(volunteer);
         }
     }
