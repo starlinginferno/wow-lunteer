@@ -26,7 +26,6 @@ public class EventService {
         return eventRepository.findAllByUser(applicationUser);
     }
 
-
     public void save(Event event) {
         eventRepository.save(event);
     }

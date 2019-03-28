@@ -53,9 +53,4 @@ public class EventController {
         event.getUser().add(applicationUser);
         eventService.save(event);
     }
-
-
-
-
-
 }
