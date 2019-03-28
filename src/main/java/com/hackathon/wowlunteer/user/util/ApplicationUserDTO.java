@@ -18,6 +18,7 @@ public class ApplicationUserDTO {
     String password;
     @NotBlank
     String email;
+    String type;
 
     List<Role> roles;
 
