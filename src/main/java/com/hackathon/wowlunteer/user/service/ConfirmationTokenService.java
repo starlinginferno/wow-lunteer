@@ -22,8 +22,6 @@ public class ConfirmationTokenService {
     }
 
     private void deleteExpired(ConfirmationToken confirmationToken) {
-        System.out.println((System.currentTimeMillis() - (ONE_DAY_IN_MILLIS) >= confirmationToken.getCreatedAt()
-                && !confirmationToken.getApplicationUser().isEnabled()));
         if (System.currentTimeMillis() - (ONE_DAY_IN_MILLIS) >= confirmationToken.getCreatedAt()
                 && !confirmationToken.getApplicationUser().isEnabled()) {
             confirmationTokenRepository.deleteById(confirmationToken.getId());

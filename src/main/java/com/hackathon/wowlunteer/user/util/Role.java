@@ -1,9 +1,13 @@
 package com.hackathon.wowlunteer.user.util;
 
 public enum Role {
-    ADMIN, USER;
+    COMPANY, VOLUNTEER;
 
     public String authority() {
         return "ROLE_" + this.name();
+    }
+
+    public String getName() {
+        return this.name();
     }
 }
