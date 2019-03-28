@@ -69,6 +69,13 @@ public class ApplicationUserService {
         return applicationUserRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("User not found: " + id));
     }
 
+    public ApplicationUser findByPrincipal(Principal principal) throws UsernameNotFoundException {
+        JwtAuthenticationToken authenticationToken = (JwtAuthenticationToken) principal;
+        UserContext userContext = (UserContext) authenticationToken.getPrincipal();
+        String email = userContext.getEmail();
+        return findByEmail(email);
+    }
+
     public ApplicationUser createNewUser(ApplicationUserDTO applicationUserDTO) throws IllegalArgumentException {
         ApplicationUser applicationUser;
         for (UserType t : UserType.values()) {
@@ -93,6 +100,7 @@ public class ApplicationUserService {
         }
         return userRoles;
     }
+
 
     public RegisterResponse registerApplicationUser(ApplicationUserDTO applicationUserDTO)
             throws EmailIsTakenException, UserRoleNotFoundException, EmailNotValidException {
@@ -144,13 +152,6 @@ public class ApplicationUserService {
 
     private Boolean existsByEmail(String email) {
         return applicationUserRepository.existsByEmail(email);
-    }
-
-    public ApplicationUser getUserFromPrincipal(Principal principal) {
-        JwtAuthenticationToken authenticationToken = (JwtAuthenticationToken) principal;
-        UserContext userContext = (UserContext) authenticationToken.getPrincipal();
-        String email = userContext.getEmail();
-        return findByEmail(email);
     }
 
     public String getUsersRole(ApplicationUser applicationUser) {

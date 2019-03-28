@@ -1,10 +1,14 @@
 package com.hackathon.wowlunteer.event.persistence.model;
 
-import com.hackathon.wowlunteer.event.utility.EventType;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.hackathon.wowlunteer.eventType.persistence.model.EventType;
+import com.hackathon.wowlunteer.user.persistence.model.ApplicationUser;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Entity
@@ -23,7 +27,11 @@ public class Event {
     private Date finish;
 
     private String address;
-    @Transient
-    @Enumerated(EnumType.STRING)
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "event_type_id")
     private EventType eventType;
+
+    @ManyToMany(mappedBy = "events")
+    private List<ApplicationUser> user = new ArrayList<>();
 }
