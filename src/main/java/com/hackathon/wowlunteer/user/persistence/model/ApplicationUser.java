@@ -33,7 +33,7 @@ public abstract class ApplicationUser {
 
     private boolean enabled;
 
-    private String mobileNumber; //36203303978
+    private String mobileNumber;
 
     @ManyToMany(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
     @JoinTable(
