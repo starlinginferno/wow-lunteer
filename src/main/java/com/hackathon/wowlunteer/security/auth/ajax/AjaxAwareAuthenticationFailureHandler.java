@@ -6,6 +6,7 @@ import com.hackathon.wowlunteer.security.common.ErrorCode;
 import com.hackathon.wowlunteer.security.common.ErrorResponse;
 import com.hackathon.wowlunteer.security.exceptions.AuthMethodNotSupportedException;
 import com.hackathon.wowlunteer.security.exceptions.JwtExpiredTokenException;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

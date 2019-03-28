@@ -84,7 +84,7 @@ public class ApplicationUserService {
                 return applicationUser;
             }
         }
-        throw new IllegalArgumentException("No such user type!");
+        throw new IllegalArgumentException("No such users type!");
     }
 
     public List<ApplicationUserRole> createRoleForUser(ApplicationUserDTO applicationUserDTO) throws UserRoleNotFoundException {

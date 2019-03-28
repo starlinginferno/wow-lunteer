@@ -1,6 +1,7 @@
 package com.hackathon.wowlunteer.event.persistence.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hackathon.wowlunteer.eventType.persistence.model.EventType;
 import com.hackathon.wowlunteer.user.persistence.model.ApplicationUser;
 import lombok.Data;
@@ -20,18 +21,19 @@ public class Event {
     private Long id;
     private String title;
     private String description;
+    private String address;
     @Temporal(TemporalType.TIMESTAMP)
-    private Date start;
+    private Date start; // yyyy-MM-dd HH:mm:ss
     @Temporal(TemporalType.TIMESTAMP)
-    private Date finish;
+    private Date finish; // yyyy-MM-dd HH:mm:ss
 
     @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "type_id")
     private EventType eventType;
 
-    private String address;
+    @JsonIgnore
+    @ManyToMany(mappedBy = "events", cascade = CascadeType.ALL)
+    private List<ApplicationUser> users = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "events")
-    private List<ApplicationUser> user = new ArrayList<>();
 }

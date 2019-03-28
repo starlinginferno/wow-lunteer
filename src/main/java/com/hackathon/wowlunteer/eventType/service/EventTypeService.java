@@ -1,5 +1,6 @@
 package com.hackathon.wowlunteer.eventType.service;
 
+import com.hackathon.wowlunteer.eventType.exception.EventTypeNotFoundException;
 import com.hackathon.wowlunteer.eventType.persistence.model.EventType;
 import com.hackathon.wowlunteer.eventType.persistence.repository.EventTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,5 +24,10 @@ public class EventTypeService {
 
     public List<EventType> findAll() {
         return eventTypeRepository.findAll();
+    }
+
+    public EventType findById(Long typeId) throws EventTypeNotFoundException {
+        return eventTypeRepository.findById(typeId).orElseThrow(
+                () ->new EventTypeNotFoundException("Event type can not be found by id: " + typeId));
     }
 }
