@@ -1,15 +1,14 @@
 package com.hackathon.wowlunteer.event.web;
 
+import com.hackathon.wowlunteer.event.persistence.model.Event;
 import com.hackathon.wowlunteer.event.service.EventService;
+import com.hackathon.wowlunteer.event.utility.CreateEventDTO;
 import com.hackathon.wowlunteer.event.utility.ListEventsDTO;
 import com.hackathon.wowlunteer.user.persistence.model.ApplicationUser;
 import com.hackathon.wowlunteer.user.service.ApplicationUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
@@ -41,6 +40,18 @@ public class EventController {
         ApplicationUser applicationUser = applicationUserService.findByPrincipal(principal);
         listEventsDTO.setEvents(eventService.findAllByUser(applicationUser));
         return listEventsDTO;
+    }
+
+    @PostMapping("")
+    @ResponseStatus(HttpStatus.OK)
+    public void createEvent(@RequestBody CreateEventDTO createEventDTO, Principal principal) {
+        ApplicationUser applicationUser = applicationUserService.findByPrincipal(principal);
+        Event event = new Event();
+        event.setTitle(createEventDTO.getTitle());
+        event.setDescription(createEventDTO.getDescription());
+        applicationUser.getEvents().add(event);
+        event.getUser().add(applicationUser);
+        eventService.save(event);
     }
 
 
