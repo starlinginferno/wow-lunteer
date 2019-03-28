@@ -1,16 +1,15 @@
 package com.hackathon.wowlunteer.user.service;
 
+import com.hackathon.wowlunteer.security.auth.jwt.JwtAuthenticationToken;
 import com.hackathon.wowlunteer.security.model.UserContext;
 import com.hackathon.wowlunteer.user.exceptions.EmailIsTakenException;
 import com.hackathon.wowlunteer.user.exceptions.EmailNotValidException;
 import com.hackathon.wowlunteer.user.exceptions.UserRoleNotFoundException;
-import com.hackathon.wowlunteer.user.persistence.model.ApplicationUser;
-import com.hackathon.wowlunteer.user.persistence.model.ApplicationUserRole;
-import com.hackathon.wowlunteer.user.persistence.model.ConfirmationToken;
-import com.hackathon.wowlunteer.user.persistence.model.Volunteer;
+import com.hackathon.wowlunteer.user.persistence.model.*;
 import com.hackathon.wowlunteer.user.persistence.repository.ApplicationUserRepository;
 import com.hackathon.wowlunteer.user.persistence.repository.ConfirmationTokenRepository;
 import com.hackathon.wowlunteer.user.util.ApplicationUserDTO;
+import com.hackathon.wowlunteer.user.util.FormDTO;
 import com.hackathon.wowlunteer.user.util.Role;
 import com.hackathon.wowlunteer.user.util.UserType;
 import com.hackathon.wowlunteer.user.web.RegisterResponse;
@@ -23,6 +22,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -62,6 +62,10 @@ public class ApplicationUserService {
 
     public ApplicationUser findByEmail(String email) throws UsernameNotFoundException {
         return applicationUserRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
+    }
+
+    public ApplicationUser findById(Long id) throws UsernameNotFoundException {
+        return applicationUserRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("User not found: " + id));
     }
 
     public ApplicationUser createNewUser(ApplicationUserDTO applicationUserDTO) throws IllegalArgumentException {
@@ -139,5 +143,38 @@ public class ApplicationUserService {
 
     private Boolean existsByEmail(String email) {
         return applicationUserRepository.existsByEmail(email);
+    }
+
+    public ApplicationUser getUserFromPrincipal(Principal principal) {
+        JwtAuthenticationToken authenticationToken = (JwtAuthenticationToken) principal;
+        UserContext userContext = (UserContext) authenticationToken.getPrincipal();
+        String email = userContext.getEmail();
+        return findByEmail(email);
+    }
+
+    public String getUsersRole(ApplicationUser applicationUser) {
+        String role = "";
+        for (int i = 0; i < applicationUser.getRoles().size(); i++) {
+            role = applicationUser.getRoles().get(i).getRoleEnum().getName();
+        }
+        return role;
+    }
+
+    public void fillInForm(ApplicationUser applicationUser, FormDTO formDTO) {
+        if (getUsersRole(applicationUser).toUpperCase().equals("COMPANY")) {
+            Company company = (Company) findById(applicationUser.getId());
+            company.setName(formDTO.getName());
+            company.setDescription(formDTO.getDescription());
+            applicationUserRepository.save(company);
+        } else if (getUsersRole(applicationUser).toUpperCase().equals("VOLUNTEER")) {
+            Volunteer volunteer = (Volunteer) findById(applicationUser.getId());
+            volunteer.setFirstName(formDTO.getFirstName());
+            volunteer.setLastName(formDTO.getLastName());
+            volunteer.setAge(formDTO.getAge());
+            volunteer.setProfession(formDTO.getProfession());
+            volunteer.setIsLooking(formDTO.getIsLooking());
+            volunteer.setEventType(formDTO.getEventType());
+            applicationUserRepository.save(volunteer);
+        }
     }
 }
