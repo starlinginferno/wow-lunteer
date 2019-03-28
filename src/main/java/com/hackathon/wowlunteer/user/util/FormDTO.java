@@ -1,17 +1,19 @@
-package com.hackathon.wowlunteer.user.persistence.model;
+package com.hackathon.wowlunteer.user.util;
 
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Entity;
+import javax.validation.constraints.Pattern;
 
-@Entity
 @Getter
 @Setter
-public class Volunteer extends ApplicationUser {
+public class FormDTO {
 
+    private String name;
+    private String description;
     private String firstName;
     private String lastName;
+    @Pattern(regexp = "^[+][0-9]*$")
     private String mobileNumber;
     private String profession;
     private Integer age;

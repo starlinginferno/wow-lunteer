@@ -5,16 +5,15 @@ import com.hackathon.wowlunteer.security.model.UserContext;
 import com.hackathon.wowlunteer.user.exceptions.EmailIsTakenException;
 import com.hackathon.wowlunteer.user.exceptions.EmailNotValidException;
 import com.hackathon.wowlunteer.user.exceptions.UserRoleNotFoundException;
-import com.hackathon.wowlunteer.user.persistence.model.ApplicationUser;
-import com.hackathon.wowlunteer.user.persistence.model.ApplicationUserRole;
-import com.hackathon.wowlunteer.user.persistence.model.ConfirmationToken;
-import com.hackathon.wowlunteer.user.persistence.model.Volunteer;
+import com.hackathon.wowlunteer.user.persistence.model.*;
 import com.hackathon.wowlunteer.user.persistence.repository.ApplicationUserRepository;
 import com.hackathon.wowlunteer.user.persistence.repository.ConfirmationTokenRepository;
 import com.hackathon.wowlunteer.user.util.ApplicationUserDTO;
+import com.hackathon.wowlunteer.user.util.FormDTO;
 import com.hackathon.wowlunteer.user.util.Role;
 import com.hackathon.wowlunteer.user.util.UserType;
 import com.hackathon.wowlunteer.user.web.RegisterResponse;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
@@ -66,14 +65,16 @@ public class ApplicationUserService {
         return applicationUserRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
     }
 
+    public ApplicationUser findById(Long id) throws UsernameNotFoundException {
+        return applicationUserRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("User not found: " + id));
+    }
 
     public ApplicationUser findByPrincipal(Principal principal) throws UsernameNotFoundException {
         JwtAuthenticationToken authenticationToken = (JwtAuthenticationToken) principal;
         UserContext userContext = (UserContext) authenticationToken.getPrincipal();
-        String loggedInUserEmail = userContext.getUsername();
-        return findByEmail(loggedInUserEmail);
+        String email = userContext.getEmail();
+        return findByEmail(email);
     }
-
 
     public ApplicationUser createNewUser(ApplicationUserDTO applicationUserDTO) throws IllegalArgumentException {
         ApplicationUser applicationUser;
@@ -151,5 +152,26 @@ public class ApplicationUserService {
 
     private Boolean existsByEmail(String email) {
         return applicationUserRepository.existsByEmail(email);
+    }
+
+    public String getUsersRole(ApplicationUser applicationUser) {
+        String role = "";
+        for (int i = 0; i < applicationUser.getRoles().size(); i++) {
+            role = applicationUser.getRoles().get(i).getRoleEnum().getName();
+        }
+        return role;
+    }
+
+    public void fillInForm(ApplicationUser applicationUser, FormDTO formDTO) {
+        ModelMapper mapper = new ModelMapper();
+        if (getUsersRole(applicationUser).toUpperCase().equals("COMPANY")) {
+            Company company = (Company) findById(applicationUser.getId());
+            mapper.map(formDTO, company);
+            applicationUserRepository.save(company);
+        } else if (getUsersRole(applicationUser).toUpperCase().equals("VOLUNTEER")) {
+            Volunteer volunteer = (Volunteer) findById(applicationUser.getId());
+            mapper.map(formDTO, volunteer);
+            applicationUserRepository.save(volunteer);
+        }
     }
 }

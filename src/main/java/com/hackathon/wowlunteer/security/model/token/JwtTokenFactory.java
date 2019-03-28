@@ -20,13 +20,13 @@ import java.util.stream.Collectors;
 public class JwtTokenFactory {
 
     public AccessJwtToken createAccessJwtToken(UserContext userContext) {
-        if (StringUtils.isBlank(userContext.getUsername()))
+        if (StringUtils.isBlank(userContext.getEmail()))
             throw new IllegalArgumentException("Cannot create JWT Token without username");
 
         if (userContext.getAuthorities() == null || userContext.getAuthorities().isEmpty())
             throw new IllegalArgumentException("User doesn't have any privileges");
 
-        Claims claims = Jwts.claims().setSubject(userContext.getUsername());
+        Claims claims = Jwts.claims().setSubject(userContext.getEmail());
         claims.put("scopes", userContext.getAuthorities().stream().map(s -> s.toString()).collect(Collectors.toList()));
 
         LocalDateTime currentTime = LocalDateTime.now();
@@ -45,13 +45,13 @@ public class JwtTokenFactory {
     }
 
     public JwtToken createRefreshToken(UserContext userContext) {
-        if (StringUtils.isBlank(userContext.getUsername())) {
+        if (StringUtils.isBlank(userContext.getEmail())) {
             throw new IllegalArgumentException("Cannot create JWT Token without username");
         }
 
         LocalDateTime currentTime = LocalDateTime.now();
 
-        Claims claims = Jwts.claims().setSubject(userContext.getUsername());
+        Claims claims = Jwts.claims().setSubject(userContext.getEmail());
         claims.put("scopes", Arrays.asList(Scopes.REFRESH_TOKEN.authority()));
 
         String token = Jwts.builder()
