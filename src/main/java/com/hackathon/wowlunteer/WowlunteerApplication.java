@@ -26,8 +26,8 @@ public class WowlunteerApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        if(eventTypeService.findAll().isEmpty()) {
-            List<EventType> evetTypes = Arrays.asList(
+        if (eventTypeService.findAll().isEmpty()) {
+            List<EventType> eventTypes = Arrays.asList(
                     new EventType("Fundraising and Administration", "Many charities are looking for people to support office work including fundraising and administration. This can be a great insight into how a charity works and your role could be very varied from helping writing funding proposals to communications and marketing work."),
                     new EventType("Environmental", "Whether it be climate change campaigning, water way cleaning or animals and plants you are interested in there is a range of environmental opportunities. Many are one off opportunities with less commitment, though more substantial student led projects are available."),
                     new EventType("Children and Young People", "There are lots of opportunities to volunteer with young people, whether within a primary or secondary school or with youth groups around the capital. Opportunities can include mentoring, training and workshops on different areas and fun activities with disabled children."),
@@ -38,7 +38,7 @@ public class WowlunteerApplication implements CommandLineRunner {
                     new EventType("Research", "Whether you are looking for research linked with your dissertation or thesis or interested in learning more about the work of a charity then you could do some bespoke research for them. There are several charities that have shown an interest in students contacting them about research. For further information contact the Volunteer Coordinator."),
                     new EventType("Refugees/migrants", "Opportunities volunteering with refugee and migrant workers can vary from lunch and dinner time support, language skills and pro bono legal support, amongst other things."));
 
-            for (EventType e : evetTypes) {
+            for (EventType e : eventTypes) {
                 eventTypeService.save(e);
             }
         }
