@@ -1,5 +1,6 @@
 package com.hackathon.wowlunteer.user.service;
 
+import com.hackathon.wowlunteer.security.auth.jwt.JwtAuthenticationToken;
 import com.hackathon.wowlunteer.security.model.UserContext;
 import com.hackathon.wowlunteer.user.exceptions.EmailIsTakenException;
 import com.hackathon.wowlunteer.user.exceptions.EmailNotValidException;
@@ -21,6 +22,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -59,6 +61,14 @@ public class ApplicationUserService {
     public ApplicationUser findByEmail(String email) throws UsernameNotFoundException {
         return applicationUserRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
     }
+
+    public ApplicationUser findByPrincipal(Principal principal) throws UsernameNotFoundException {
+        JwtAuthenticationToken authenticationToken = (JwtAuthenticationToken) principal;
+        UserContext userContext = (UserContext) authenticationToken.getPrincipal();
+        String loggedInUserEmail = userContext.getUsername();
+        return findByEmail(loggedInUserEmail);
+    }
+
 
     public RegisterResponse registerApplicationUser(ApplicationUserDTO applicationUserDTO)
             throws EmailIsTakenException, UserRoleNotFoundException, EmailNotValidException {

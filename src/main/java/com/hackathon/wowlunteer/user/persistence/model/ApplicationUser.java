@@ -1,6 +1,7 @@
 package com.hackathon.wowlunteer.user.persistence.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.hackathon.wowlunteer.event.persistence.model.Event;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -39,6 +40,14 @@ public class ApplicationUser {
     @JsonManagedReference
     @OneToOne(mappedBy = "applicationUser", targetEntity = ConfirmationToken.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private ConfirmationToken confirmationToken;
+
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "app_user_events",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "event_id"))
+    @JsonManagedReference
+    private List<Event> events = new ArrayList<>();
 
     public void setRoles(List<ApplicationUserRole> roles) {
         this.roles = roles;
