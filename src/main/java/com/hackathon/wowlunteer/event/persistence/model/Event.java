@@ -1,6 +1,7 @@
 package com.hackathon.wowlunteer.event.persistence.model;
 
-import com.hackathon.wowlunteer.event.utility.EventType;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.hackathon.wowlunteer.eventType.persistence.model.EventType;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -23,7 +24,8 @@ public class Event {
     private Date finish;
 
     private String address;
-    @Transient
-    @Enumerated(EnumType.STRING)
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "event_type_id")
     private EventType eventType;
 }
