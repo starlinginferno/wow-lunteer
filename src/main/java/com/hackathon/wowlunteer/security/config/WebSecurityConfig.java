@@ -111,7 +111,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .and()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.GET, "api/user")
+                .antMatchers(HttpMethod.GET, "api/users")
                 .hasAnyRole("ADMIN")
                 .and()
 
