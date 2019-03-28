@@ -4,12 +4,17 @@ import com.hackathon.wowlunteer.event.persistence.model.Event;
 import com.hackathon.wowlunteer.event.service.EventService;
 import com.hackathon.wowlunteer.event.utility.CreateEventDTO;
 import com.hackathon.wowlunteer.event.utility.ListEventsDTO;
+import com.hackathon.wowlunteer.eventType.exception.EventTypeNotFoundException;
+import com.hackathon.wowlunteer.eventType.persistence.model.EventType;
+import com.hackathon.wowlunteer.eventType.service.EventTypeService;
 import com.hackathon.wowlunteer.user.persistence.model.ApplicationUser;
 import com.hackathon.wowlunteer.user.service.ApplicationUserService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.security.Principal;
 
 @RestController
@@ -17,11 +22,14 @@ import java.security.Principal;
 public class EventController {
 
     private EventService eventService;
+    private EventTypeService eventTypeService;
     private ApplicationUserService applicationUserService;
+    private ModelMapper modelMapper = new ModelMapper();
 
     @Autowired
-    public EventController(EventService eventService, ApplicationUserService applicationUserService) {
+    public EventController(EventService eventService, EventTypeService eventTypeService, ApplicationUserService applicationUserService) {
         this.eventService = eventService;
+        this.eventTypeService = eventTypeService;
         this.applicationUserService = applicationUserService;
     }
 
@@ -38,19 +46,21 @@ public class EventController {
     public ListEventsDTO getUsersEvents(Principal principal) {
         ListEventsDTO listEventsDTO = new ListEventsDTO();
         ApplicationUser applicationUser = applicationUserService.findByPrincipal(principal);
-        listEventsDTO.setEvents(eventService.findAllByUser(applicationUser));
+        listEventsDTO.setEvents(applicationUser.getEvents());
         return listEventsDTO;
     }
 
     @PostMapping("")
     @ResponseStatus(HttpStatus.OK)
-    public void createEvent(@RequestBody CreateEventDTO createEventDTO, Principal principal) {
+    public void createEvent(@RequestBody @Valid CreateEventDTO createEventDTO, Principal principal)
+            throws EventTypeNotFoundException {
         ApplicationUser applicationUser = applicationUserService.findByPrincipal(principal);
-        Event event = new Event();
-        event.setTitle(createEventDTO.getTitle());
-        event.setDescription(createEventDTO.getDescription());
+        Event event = modelMapper.map(createEventDTO, Event.class);
+        EventType eventType = eventTypeService.findById(createEventDTO.getTypeId());
+        eventType.getEventList().add(event);
+        event.setEventType(eventType);
         applicationUser.getEvents().add(event);
-        event.getUser().add(applicationUser);
+        event.getUsers().add(applicationUser);
         eventService.save(event);
     }
 }

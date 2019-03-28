@@ -21,7 +21,7 @@ public class EventType {
     private String description;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "eventType", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "eventType", cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     private List<Event> eventList;
 
     public EventType() {

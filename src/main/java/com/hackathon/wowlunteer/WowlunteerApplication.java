@@ -25,7 +25,7 @@ public class WowlunteerApplication implements CommandLineRunner {
     }
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
         if (eventTypeService.findAll().isEmpty()) {
             List<EventType> eventTypes = Arrays.asList(
                     new EventType("Fundraising and Administration", "Many charities are looking for people to support office work including fundraising and administration. This can be a great insight into how a charity works and your role could be very varied from helping writing funding proposals to communications and marketing work."),
@@ -42,5 +42,6 @@ public class WowlunteerApplication implements CommandLineRunner {
                 eventTypeService.save(e);
             }
         }
+
     }
 }

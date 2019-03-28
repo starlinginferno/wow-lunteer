@@ -14,7 +14,7 @@ public class ScheduledTasks {
     public ScheduledTasks(ConfirmationTokenService confirmationTokenService) {
         this.confirmationTokenService = confirmationTokenService;
     }
-    
+
     @Scheduled(fixedRate = 60000 * 60 * 24)
     public void reportCurrentTime() {
         confirmationTokenService.deleteAllExpired();

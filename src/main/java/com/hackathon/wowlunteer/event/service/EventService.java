@@ -22,10 +22,6 @@ public class EventService {
         return eventRepository.findAll();
     }
 
-    public List<Event> findAllByUser(ApplicationUser applicationUser) {
-        return eventRepository.findAllByUser(applicationUser);
-    }
-
     public void save(Event event) {
         eventRepository.save(event);
     }
