@@ -7,4 +7,5 @@ public class CreateEventDTO {
     //TODO: put all fields
     private String title;
     private String description;
+
 }
