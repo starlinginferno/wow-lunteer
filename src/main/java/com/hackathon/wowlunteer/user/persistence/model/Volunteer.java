@@ -2,6 +2,7 @@ package com.hackathon.wowlunteer.user.persistence.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.persistence.Entity;
 
@@ -13,8 +14,8 @@ public class Volunteer extends ApplicationUser {
     private String firstName;
     private String lastName;
     private String mobileNumber;
-    private String profession;
+    private String profession = "";
     private Integer age;
-    private Boolean isLooking;
-    private String eventType;
+    private Boolean isLooking = false;
+    private String eventType = "";
 }

@@ -8,6 +8,7 @@ import com.hackathon.wowlunteer.user.exceptions.UserRoleNotFoundException;
 import com.hackathon.wowlunteer.user.persistence.model.*;
 import com.hackathon.wowlunteer.user.persistence.repository.ApplicationUserRepository;
 import com.hackathon.wowlunteer.user.persistence.repository.ConfirmationTokenRepository;
+import com.hackathon.wowlunteer.user.persistence.repository.VolunteerRepository;
 import com.hackathon.wowlunteer.user.util.ApplicationUserDTO;
 import com.hackathon.wowlunteer.user.util.FormDTO;
 import com.hackathon.wowlunteer.user.util.Role;
