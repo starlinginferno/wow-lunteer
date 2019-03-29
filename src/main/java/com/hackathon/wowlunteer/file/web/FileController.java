@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
 public class FileController {
 
     private static final Logger logger = LoggerFactory.getLogger(FileController.class);
@@ -41,7 +40,7 @@ public class FileController {
         this.applicationUserService = applicationUserService;
     }
 
-    @PostMapping("/uploadFile")
+    @PostMapping("/api/uploadFile")
     public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file, Principal principal)
             throws FileStorageException, WrongExtensionException, IOException,
             FileUploadBase.FileSizeLimitExceededException {
@@ -50,7 +49,7 @@ public class FileController {
         DBFile dbFile = dbFileStorageService.storeFile(file, applicationUser);
 
         String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/api/downloadFile/")
+                .path("/downloadFile/")
                 .path(dbFile.getId())
                 .toUriString();
 

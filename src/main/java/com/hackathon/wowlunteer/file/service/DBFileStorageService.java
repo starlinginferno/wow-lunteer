@@ -31,7 +31,7 @@ public class DBFileStorageService {
         if (file.getSize() > 1000000) {
             throw new FileUploadBase.FileSizeLimitExceededException("File is too large", file.getSize(), 1000000L);
         }
-        String fileExtension = ".jpg,.png";
+        String fileExtension = ".jpg";
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
 
         int lastIndex = fileName.lastIndexOf('.');

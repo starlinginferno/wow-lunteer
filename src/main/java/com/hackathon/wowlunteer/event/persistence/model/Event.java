@@ -20,6 +20,7 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
+    @Column(length=5000)
     private String description;
     private String address;
     @Temporal(TemporalType.TIMESTAMP)
