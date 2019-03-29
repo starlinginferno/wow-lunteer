@@ -25,7 +25,7 @@ public class DBFile {
     private byte[] data;
 
     @JsonBackReference
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "application_user_id")
     private ApplicationUser applicationUser;
 

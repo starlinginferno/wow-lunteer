@@ -1,6 +1,5 @@
 package com.hackathon.wowlunteer.event.utility;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
