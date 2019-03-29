@@ -7,6 +7,7 @@ import com.hackathon.wowlunteer.user.persistence.model.ApplicationUser;
 import com.hackathon.wowlunteer.user.persistence.model.Volunteer;
 import com.hackathon.wowlunteer.user.service.ApplicationUserService;
 import com.hackathon.wowlunteer.user.util.ApplicationUserDTO;
+import com.hackathon.wowlunteer.user.util.EmailDTO;
 import com.hackathon.wowlunteer.user.util.FormDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -48,7 +49,7 @@ public class ApplicationUserController {
 
     @GetMapping("/api/user/email")
     @ResponseStatus(HttpStatus.OK)
-    public String getUsersEmail(Principal principal) {
-        return applicationUserService.findByPrincipal(principal).getEmail();
+    public EmailDTO getUsersEmail(Principal principal) {
+        return new EmailDTO(applicationUserService.findByPrincipal(principal).getEmail());
     }
 }

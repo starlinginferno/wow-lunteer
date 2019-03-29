@@ -16,7 +16,7 @@ public class ScheduledTasks {
     }
 
     @Scheduled(fixedRate = 60000 * 60 * 24)
-    public void reportCurrentTime() {
+    public void deleteUnvalidated() {
         confirmationTokenService.deleteAllExpired();
     }
 }
