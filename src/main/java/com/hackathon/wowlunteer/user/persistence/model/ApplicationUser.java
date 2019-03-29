@@ -3,6 +3,7 @@ package com.hackathon.wowlunteer.user.persistence.model;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import com.hackathon.wowlunteer.event.persistence.model.Event;
+import com.hackathon.wowlunteer.file.persitence.model.DBFile;
 import com.hackathon.wowlunteer.user.util.UserType;
 
 import lombok.Getter;
@@ -56,6 +57,10 @@ public abstract class ApplicationUser {
             inverseJoinColumns = @JoinColumn(name = "event_id"))
     @JsonManagedReference
     private List<Event> events = new ArrayList<>();
+
+    @JsonManagedReference
+    @OneToOne(mappedBy = "applicationUser", targetEntity = DBFile.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private DBFile dbFile;
 
 
     public void setRoles(List<ApplicationUserRole> roles) {
