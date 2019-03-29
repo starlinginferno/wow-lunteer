@@ -30,4 +30,9 @@ public class EventTypeService {
         return eventTypeRepository.findById(typeId).orElseThrow(
                 () ->new EventTypeNotFoundException("Event type can not be found by id: " + typeId));
     }
+
+    public EventType findByType(String type) throws EventTypeNotFoundException {
+        return eventTypeRepository.findByType(type).orElseThrow(
+                () ->new EventTypeNotFoundException("Event type can not be found by type: " + type));
+    }
 }

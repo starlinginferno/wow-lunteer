@@ -2,7 +2,7 @@ package com.hackathon.wowlunteer.event.web;
 
 import com.hackathon.wowlunteer.event.persistence.model.Event;
 import com.hackathon.wowlunteer.event.service.EventService;
-import com.hackathon.wowlunteer.event.utility.CreateEventDTO;
+import com.hackathon.wowlunteer.event.utility.EventDTO;
 import com.hackathon.wowlunteer.event.utility.ListEventsDTO;
 import com.hackathon.wowlunteer.eventType.exception.EventTypeNotFoundException;
 import com.hackathon.wowlunteer.eventType.persistence.model.EventType;
@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/event")
@@ -52,15 +53,21 @@ public class EventController {
 
     @PostMapping("")
     @ResponseStatus(HttpStatus.OK)
-    public void createEvent(@RequestBody @Valid CreateEventDTO createEventDTO, Principal principal)
+    public void createEvent(@RequestBody @Valid EventDTO eventDTO, Principal principal)
             throws EventTypeNotFoundException {
         ApplicationUser applicationUser = applicationUserService.findByPrincipal(principal);
-        Event event = modelMapper.map(createEventDTO, Event.class);
-        EventType eventType = eventTypeService.findById(createEventDTO.getTypeId());
+        Event event = modelMapper.map(eventDTO, Event.class);
+        EventType eventType = eventTypeService.findByType(eventDTO.getType());
         eventType.getEventList().add(event);
         event.setEventType(eventType);
         applicationUser.getEvents().add(event);
         event.getUsers().add(applicationUser);
         eventService.save(event);
+    }
+
+    @GetMapping("/search")
+    @ResponseStatus(HttpStatus.OK)
+    public List<EventDTO> searchEvents(@RequestParam(name = "type") String type) {
+        return eventService.mapEventDTOList(eventService.findAllByType(type));
     }
 }

@@ -45,4 +45,10 @@ public class ApplicationUserController {
         ApplicationUser applicationUser = applicationUserService.findByPrincipal(principal);
         applicationUserService.fillInForm(applicationUser, formDTO);
     }
+
+    @GetMapping("/api/user/email")
+    @ResponseStatus(HttpStatus.OK)
+    public String getUsersEmail(Principal principal) {
+        return applicationUserService.findByPrincipal(principal).getEmail();
+    }
 }
