@@ -128,8 +128,7 @@ public class ApplicationUserService {
                 mailMessage.setSubject("Complete Registration!");
                 mailMessage.setFrom("mailappforhackathon@gmail.com");
                 mailMessage.setText("To confirm your account, please click here : "
-                        +"http://" + System.getenv("LOCAL_IP") + ":8080/confirm-account?token="+confirmationToken.getConfirmationToken());
-
+                        +"http://hackathon.eu-west-3.elasticbeanstalk.com/confirm-account?token="+confirmationToken.getConfirmationToken());
                 emailSenderService.sendEmail(mailMessage);
                 return new RegisterResponse(applicationUser.getId(),
                         applicationUser.getEmail(), "Please verify your email address");

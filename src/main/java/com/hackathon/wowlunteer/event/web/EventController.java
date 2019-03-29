@@ -70,4 +70,16 @@ public class EventController {
     public List<EventDTO> searchEvents(@RequestParam(name = "type") String type) {
         return eventService.mapEventDTOList(eventService.findAllByType(type));
     }
+
+    @GetMapping("{id}")
+    public EventDTO showEvent(@PathVariable Long id) {
+        return eventService.findById(id);
+    }
+
+    @PostMapping("/apply/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<String> applyToEvent(@PathVariable Long id, Principal principal) {
+        return eventService.applyToEvent(id, applicationUserService.findByPrincipal(principal));
+    }
+
 }

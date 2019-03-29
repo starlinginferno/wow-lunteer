@@ -5,9 +5,11 @@ import com.hackathon.wowlunteer.event.persistence.repository.EventRepository;
 import com.hackathon.wowlunteer.event.utility.EventDTO;
 import com.hackathon.wowlunteer.eventType.persistence.model.EventType;
 import com.hackathon.wowlunteer.user.persistence.model.ApplicationUser;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,6 +31,12 @@ public class EventService {
         return eventRepository.findAll().stream().filter(e -> e.getEventType().getType().toUpperCase().equals(type.toUpperCase())).collect(Collectors.toList());
     }
 
+    public EventDTO findById(Long id) throws IllegalArgumentException {
+        ModelMapper modelMapper = new ModelMapper();
+        Event event = eventRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Event not found: " + id));
+        return modelMapper.map(event, EventDTO.class);
+    }
+
     public List<EventDTO> mapEventDTOList(List<Event> eventList) {
         return eventList
                 .stream()
@@ -39,5 +47,16 @@ public class EventService {
 
     public void save(Event event) {
         eventRepository.save(event);
+    }
+
+    public List<String> applyToEvent(Long id, ApplicationUser applicationUser) {
+        List<String> list = new ArrayList<>();
+        Event event = eventRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Event not found: " + id));
+        event.getUsers().add(applicationUser);
+        applicationUser.getEvents().add(event);
+        list.add(applicationUser.getEmail());
+        list.add(event.getTitle());
+        save(event);
+        return list;
     }
 }
