@@ -18,6 +18,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "users")
+@Inheritance
 public abstract class ApplicationUser {
 
     @Id
