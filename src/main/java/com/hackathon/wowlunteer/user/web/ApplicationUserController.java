@@ -4,7 +4,6 @@ import com.hackathon.wowlunteer.user.exceptions.EmailIsTakenException;
 import com.hackathon.wowlunteer.user.exceptions.EmailNotValidException;
 import com.hackathon.wowlunteer.user.exceptions.UserRoleNotFoundException;
 import com.hackathon.wowlunteer.user.persistence.model.ApplicationUser;
-import com.hackathon.wowlunteer.user.persistence.model.Volunteer;
 import com.hackathon.wowlunteer.user.service.ApplicationUserService;
 import com.hackathon.wowlunteer.user.util.ApplicationUserDTO;
 import com.hackathon.wowlunteer.user.util.EmailDTO;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.security.Principal;
-import java.util.List;
 
 @RestController
 public class ApplicationUserController {
