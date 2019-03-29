@@ -6,6 +6,8 @@ import com.hackathon.wowlunteer.file.persitence.model.DBFile;
 import com.hackathon.wowlunteer.file.service.DBFileStorageService;
 import com.hackathon.wowlunteer.file.utility.ErrorResponse;
 import com.hackathon.wowlunteer.file.utility.UploadFileResponse;
+import com.hackathon.wowlunteer.user.persistence.model.ApplicationUser;
+import com.hackathon.wowlunteer.user.service.ApplicationUserService;
 import org.apache.tomcat.util.http.fileupload.FileUploadBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,48 +23,37 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
 public class FileController {
 
     private static final Logger logger = LoggerFactory.getLogger(FileController.class);
     private DBFileStorageService dbFileStorageService;
+    private ApplicationUserService applicationUserService;
 
     @Autowired
-    public FileController(DBFileStorageService dbFileStorageService) {
+    public FileController(DBFileStorageService dbFileStorageService, ApplicationUserService applicationUserService) {
         this.dbFileStorageService = dbFileStorageService;
+        this.applicationUserService = applicationUserService;
     }
 
-    @PostMapping("/uploadFile")
-    public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file) throws FileStorageException, WrongExtensionException, IOException, FileUploadBase.FileSizeLimitExceededException {
+    @PostMapping("/api/uploadFile")
+    public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file, Principal principal)
+            throws FileStorageException, WrongExtensionException, IOException,
+            FileUploadBase.FileSizeLimitExceededException {
+        ApplicationUser applicationUser = applicationUserService.findByPrincipal(principal);
 
-
-        DBFile dbFile = dbFileStorageService.storeFile(file);
+        DBFile dbFile = dbFileStorageService.storeFile(file, applicationUser);
 
         String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/api/downloadFile/")
+                .path("/downloadFile/")
                 .path(dbFile.getId())
                 .toUriString();
 
         return new UploadFileResponse(dbFile.getFileName(), fileDownloadUri, file.getContentType(), file.getSize());
-    }
-
-    @PostMapping("/uploadMultipleFiles")
-    public List<UploadFileResponse> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files) {
-        List<UploadFileResponse> list = new ArrayList<>();
-        for (MultipartFile file : files) {
-            UploadFileResponse uploadFileResponse = null;
-            try {
-                uploadFileResponse = uploadFile(file);
-            } catch (FileStorageException | WrongExtensionException | IOException | FileUploadBase.FileSizeLimitExceededException e) {
-                e.printStackTrace();
-            }
-            list.add(uploadFileResponse);
-        }
-        return list;
     }
 
     @GetMapping("/downloadFile/{fileId}")

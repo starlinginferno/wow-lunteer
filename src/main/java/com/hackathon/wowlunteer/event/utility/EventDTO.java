@@ -1,11 +1,13 @@
 package com.hackathon.wowlunteer.event.utility;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Data
+@NoArgsConstructor
 public class EventDTO {
     @NotNull
     private String type;

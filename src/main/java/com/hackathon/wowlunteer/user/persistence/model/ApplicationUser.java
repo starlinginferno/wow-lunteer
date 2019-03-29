@@ -59,8 +59,8 @@ public abstract class ApplicationUser {
     private List<Event> events = new ArrayList<>();
 
     @JsonManagedReference
-    @OneToOne(mappedBy = "applicationUser", targetEntity = DBFile.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private DBFile dbFile;
+    @OneToMany(mappedBy = "applicationUser", targetEntity = DBFile.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<DBFile> dbFiles;
 
 
     public void setRoles(List<ApplicationUserRole> roles) {

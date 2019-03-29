@@ -128,7 +128,7 @@ public class ApplicationUserService {
                 mailMessage.setSubject("Complete Registration!");
                 mailMessage.setFrom("mailappforhackathon@gmail.com");
                 mailMessage.setText("To confirm your account, please click here : "
-                        +"http://localhost:8080/confirm-account?token="+confirmationToken.getConfirmationToken());
+                        +"http://" + System.getenv("LOCAL_IP") + ":8080/confirm-account?token="+confirmationToken.getConfirmationToken());
 
                 emailSenderService.sendEmail(mailMessage);
                 return new RegisterResponse(applicationUser.getId(),
