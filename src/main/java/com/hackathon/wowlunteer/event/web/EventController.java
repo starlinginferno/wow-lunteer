@@ -78,8 +78,8 @@ public class EventController {
 
     @PostMapping("/apply/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public List<String> applyToEvent(@PathVariable Long id, Principal principal) {
-        return eventService.applyToEvent(id, applicationUserService.findByPrincipal(principal));
+    public void applyToEvent(@PathVariable Long id, Principal principal) {
+        eventService.applyToEvent(id, applicationUserService.findByPrincipal(principal));
     }
 
 }
