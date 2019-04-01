@@ -49,14 +49,14 @@ public class EventService {
         eventRepository.save(event);
     }
 
-    public List<String> applyToEvent(Long id, ApplicationUser applicationUser) {
-        List<String> list = new ArrayList<>();
+    public void applyToEvent(Long id, ApplicationUser applicationUser) {
         Event event = eventRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Event not found: " + id));
-        event.getUsers().add(applicationUser);
-        applicationUser.getEvents().add(event);
-        list.add(applicationUser.getEmail());
-        list.add(event.getTitle());
-        save(event);
-        return list;
+        for (int i = 0; i < event.getUsers().size(); i++) {
+            if (!event.getUsers().get(i).getId().equals(applicationUser.getId())) {
+                event.getUsers().add(applicationUser);
+                applicationUser.getEvents().add(event);
+                save(event);
+            }
+        }
     }
 }
